@@ -1,0 +1,16 @@
+# Pixi-managed environment (large, machine-specific)
+.pixi/
+
+# Downloaded scene dataset (fetched via `pixi run -e habitat fetch-replica`)
+replica_v1/
+
+# Generated pipeline outputs
+part1_output/
+part2_output/
+
+# Python bytecode cache
+__pycache__/
+*.pyc
+
+# macOS
+.DS_Store

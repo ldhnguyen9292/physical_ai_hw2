@@ -1,0 +1,1134 @@
+{
+  "cases": [
+    {
+      "id": "tc_01",
+      "comment": "Drive to the cooktop.",
+      "start_world": [
+        4.54,
+        8.16
+      ],
+      "goal_object": "cooktop",
+      "restricted_zones": [
+        {
+          "id": "zone_kitchen",
+          "comment": "Working space in front of the kitchen units, where someone stands to cook.",
+          "polygon": [
+            [
+              -0.24,
+              -1.29
+            ],
+            [
+              -0.16,
+              -0.03
+            ],
+            [
+              0.25,
+              -0.11
+            ],
+            [
+              0.17,
+              -0.91
+            ],
+            [
+              0.9,
+              -1.05
+            ],
+            [
+              0.9,
+              -1.42
+            ]
+          ]
+        },
+        {
+          "id": "zone_dining",
+          "comment": "Floor around the dining table, where chairs get pushed back.",
+          "polygon": [
+            [
+              -0.53,
+              2.35
+            ],
+            [
+              1.26,
+              2.26
+            ],
+            [
+              1.66,
+              3.61
+            ],
+            [
+              1.08,
+              3.67
+            ]
+          ]
+        },
+        {
+          "id": "zone_living",
+          "comment": "The living room's open floor, in front of the sofa.",
+          "polygon": [
+            [
+              -0.02,
+              6.22
+            ],
+            [
+              0.11,
+              6.64
+            ],
+            [
+              0.93,
+              6.73
+            ],
+            [
+              1.57,
+              8.9
+            ],
+            [
+              2.06,
+              8.9
+            ],
+            [
+              1.04,
+              6.03
+            ]
+          ]
+        }
+      ],
+      "people": [
+        {
+          "id": "person_1",
+          "comment": "Standing across the route to the cooktop.",
+          "position": [
+            2.33,
+            3.6
+          ],
+          "phi": 334.0,
+          "f": 1.2,
+          "b": 0.6,
+          "s": 0.4
+        }
+      ]
+    },
+    {
+      "id": "tc_02",
+      "comment": "Drive to the stair.",
+      "start_world": [
+        2.24,
+        -2.75
+      ],
+      "goal_object": "stair",
+      "restricted_zones": [
+        {
+          "id": "zone_kitchen",
+          "comment": "Working space in front of the kitchen units, where someone stands to cook.",
+          "polygon": [
+            [
+              -0.24,
+              -1.29
+            ],
+            [
+              -0.16,
+              -0.03
+            ],
+            [
+              0.25,
+              -0.11
+            ],
+            [
+              0.17,
+              -0.91
+            ],
+            [
+              0.9,
+              -1.05
+            ],
+            [
+              0.9,
+              -1.42
+            ]
+          ]
+        },
+        {
+          "id": "zone_dining",
+          "comment": "Floor around the dining table, where chairs get pushed back.",
+          "polygon": [
+            [
+              -0.53,
+              2.35
+            ],
+            [
+              1.26,
+              2.26
+            ],
+            [
+              1.66,
+              3.61
+            ],
+            [
+              1.08,
+              3.67
+            ]
+          ]
+        },
+        {
+          "id": "zone_living",
+          "comment": "The living room's open floor, in front of the sofa.",
+          "polygon": [
+            [
+              -0.02,
+              6.22
+            ],
+            [
+              0.11,
+              6.64
+            ],
+            [
+              0.93,
+              6.73
+            ],
+            [
+              1.57,
+              8.9
+            ],
+            [
+              2.06,
+              8.9
+            ],
+            [
+              1.04,
+              6.03
+            ]
+          ]
+        }
+      ],
+      "people": [
+        {
+          "id": "person_1",
+          "comment": "Standing across the route to the stair.",
+          "position": [
+            3.37,
+            2.53
+          ],
+          "phi": 163.7,
+          "f": 1.2,
+          "b": 0.6,
+          "s": 0.4
+        }
+      ]
+    },
+    {
+      "id": "tc_03",
+      "comment": "Drive to the desk.",
+      "start_world": [
+        -1.93,
+        3.39
+      ],
+      "goal_object": "desk",
+      "restricted_zones": [
+        {
+          "id": "zone_kitchen",
+          "comment": "Working space in front of the kitchen units, where someone stands to cook.",
+          "polygon": [
+            [
+              -0.24,
+              -1.29
+            ],
+            [
+              -0.16,
+              -0.03
+            ],
+            [
+              0.25,
+              -0.11
+            ],
+            [
+              0.17,
+              -0.91
+            ],
+            [
+              0.9,
+              -1.05
+            ],
+            [
+              0.9,
+              -1.42
+            ]
+          ]
+        },
+        {
+          "id": "zone_dining",
+          "comment": "Floor around the dining table, where chairs get pushed back.",
+          "polygon": [
+            [
+              -0.53,
+              2.35
+            ],
+            [
+              1.26,
+              2.26
+            ],
+            [
+              1.66,
+              3.61
+            ],
+            [
+              1.08,
+              3.67
+            ]
+          ]
+        },
+        {
+          "id": "zone_living",
+          "comment": "The living room's open floor, in front of the sofa.",
+          "polygon": [
+            [
+              -0.02,
+              6.22
+            ],
+            [
+              0.11,
+              6.64
+            ],
+            [
+              0.93,
+              6.73
+            ],
+            [
+              1.57,
+              8.9
+            ],
+            [
+              2.06,
+              8.9
+            ],
+            [
+              1.04,
+              6.03
+            ]
+          ]
+        }
+      ],
+      "people": [
+        {
+          "id": "person_1",
+          "comment": "Standing across the route to the desk.",
+          "position": [
+            1.29,
+            2.32
+          ],
+          "phi": 69.9,
+          "f": 1.2,
+          "b": 0.6,
+          "s": 0.4
+        }
+      ]
+    },
+    {
+      "id": "tc_04",
+      "comment": "Drive to the lamp.",
+      "start_world": [
+        4.48,
+        1.48
+      ],
+      "goal_object": "lamp",
+      "restricted_zones": [
+        {
+          "id": "zone_kitchen",
+          "comment": "Working space in front of the kitchen units, where someone stands to cook.",
+          "polygon": [
+            [
+              -0.24,
+              -1.29
+            ],
+            [
+              -0.16,
+              -0.03
+            ],
+            [
+              0.25,
+              -0.11
+            ],
+            [
+              0.17,
+              -0.91
+            ],
+            [
+              0.9,
+              -1.05
+            ],
+            [
+              0.9,
+              -1.42
+            ]
+          ]
+        },
+        {
+          "id": "zone_dining",
+          "comment": "Floor around the dining table, where chairs get pushed back.",
+          "polygon": [
+            [
+              -0.53,
+              2.35
+            ],
+            [
+              1.26,
+              2.26
+            ],
+            [
+              1.66,
+              3.61
+            ],
+            [
+              1.08,
+              3.67
+            ]
+          ]
+        },
+        {
+          "id": "zone_living",
+          "comment": "The living room's open floor, in front of the sofa.",
+          "polygon": [
+            [
+              -0.02,
+              6.22
+            ],
+            [
+              0.11,
+              6.64
+            ],
+            [
+              0.93,
+              6.73
+            ],
+            [
+              1.57,
+              8.9
+            ],
+            [
+              2.06,
+              8.9
+            ],
+            [
+              1.04,
+              6.03
+            ]
+          ]
+        }
+      ],
+      "people": [
+        {
+          "id": "person_1",
+          "comment": "Standing across the route to the lamp.",
+          "position": [
+            1.41,
+            3.66
+          ],
+          "phi": 236.5,
+          "f": 1.2,
+          "b": 0.6,
+          "s": 0.4
+        }
+      ]
+    },
+    {
+      "id": "tc_05",
+      "comment": "Drive to the refrigerator.",
+      "start_world": [
+        1.23,
+        5.65
+      ],
+      "goal_object": "refrigerator",
+      "restricted_zones": [
+        {
+          "id": "zone_kitchen",
+          "comment": "Working space in front of the kitchen units, where someone stands to cook.",
+          "polygon": [
+            [
+              -0.24,
+              -1.29
+            ],
+            [
+              -0.16,
+              -0.03
+            ],
+            [
+              0.25,
+              -0.11
+            ],
+            [
+              0.17,
+              -0.91
+            ],
+            [
+              0.9,
+              -1.05
+            ],
+            [
+              0.9,
+              -1.42
+            ]
+          ]
+        },
+        {
+          "id": "zone_dining",
+          "comment": "Floor around the dining table, where chairs get pushed back.",
+          "polygon": [
+            [
+              -0.53,
+              2.35
+            ],
+            [
+              1.26,
+              2.26
+            ],
+            [
+              1.66,
+              3.61
+            ],
+            [
+              1.08,
+              3.67
+            ]
+          ]
+        },
+        {
+          "id": "zone_living",
+          "comment": "The living room's open floor, in front of the sofa.",
+          "polygon": [
+            [
+              -0.02,
+              6.22
+            ],
+            [
+              0.11,
+              6.64
+            ],
+            [
+              0.93,
+              6.73
+            ],
+            [
+              1.57,
+              8.9
+            ],
+            [
+              2.06,
+              8.9
+            ],
+            [
+              1.04,
+              6.03
+            ]
+          ]
+        }
+      ],
+      "people": [
+        {
+          "id": "person_1",
+          "comment": "Standing across the route to the refrigerator.",
+          "position": [
+            0.51,
+            3.21
+          ],
+          "phi": 353.0,
+          "f": 1.2,
+          "b": 0.6,
+          "s": 0.4
+        }
+      ]
+    },
+    {
+      "id": "tc_06",
+      "comment": "Drive to the sofa.",
+      "start_world": [
+        0.54,
+        0.26
+      ],
+      "goal_object": "sofa",
+      "restricted_zones": [
+        {
+          "id": "zone_kitchen",
+          "comment": "Working space in front of the kitchen units, where someone stands to cook.",
+          "polygon": [
+            [
+              -0.24,
+              -1.29
+            ],
+            [
+              -0.16,
+              -0.03
+            ],
+            [
+              0.25,
+              -0.11
+            ],
+            [
+              0.17,
+              -0.91
+            ],
+            [
+              0.9,
+              -1.05
+            ],
+            [
+              0.9,
+              -1.42
+            ]
+          ]
+        },
+        {
+          "id": "zone_dining",
+          "comment": "Floor around the dining table, where chairs get pushed back.",
+          "polygon": [
+            [
+              -0.53,
+              2.35
+            ],
+            [
+              1.26,
+              2.26
+            ],
+            [
+              1.66,
+              3.61
+            ],
+            [
+              1.08,
+              3.67
+            ]
+          ]
+        },
+        {
+          "id": "zone_living",
+          "comment": "The living room's open floor, in front of the sofa.",
+          "polygon": [
+            [
+              -0.02,
+              6.22
+            ],
+            [
+              0.11,
+              6.64
+            ],
+            [
+              0.93,
+              6.73
+            ],
+            [
+              1.57,
+              8.9
+            ],
+            [
+              2.06,
+              8.9
+            ],
+            [
+              1.04,
+              6.03
+            ]
+          ]
+        }
+      ],
+      "people": [
+        {
+          "id": "person_1",
+          "comment": "Standing across the route to the sofa.",
+          "position": [
+            1.32,
+            2.44
+          ],
+          "phi": 171.8,
+          "f": 1.2,
+          "b": 0.6,
+          "s": 0.4
+        },
+        {
+          "id": "person_2",
+          "comment": "Standing beside the route to the sofa.",
+          "position": [
+            1.26,
+            5.18
+          ],
+          "phi": 351.8,
+          "f": 1.2,
+          "b": 0.6,
+          "s": 0.4
+        }
+      ]
+    },
+    {
+      "id": "tc_07",
+      "comment": "Drive to the rug.",
+      "start_world": [
+        3.25,
+        -0.42
+      ],
+      "goal_object": "rug",
+      "restricted_zones": [
+        {
+          "id": "zone_kitchen",
+          "comment": "Working space in front of the kitchen units, where someone stands to cook.",
+          "polygon": [
+            [
+              -0.24,
+              -1.29
+            ],
+            [
+              -0.16,
+              -0.03
+            ],
+            [
+              0.25,
+              -0.11
+            ],
+            [
+              0.17,
+              -0.91
+            ],
+            [
+              0.9,
+              -1.05
+            ],
+            [
+              0.9,
+              -1.42
+            ]
+          ]
+        },
+        {
+          "id": "zone_dining",
+          "comment": "Floor around the dining table, where chairs get pushed back.",
+          "polygon": [
+            [
+              -0.53,
+              2.35
+            ],
+            [
+              1.26,
+              2.26
+            ],
+            [
+              1.66,
+              3.61
+            ],
+            [
+              1.08,
+              3.67
+            ]
+          ]
+        },
+        {
+          "id": "zone_living",
+          "comment": "The living room's open floor, in front of the sofa.",
+          "polygon": [
+            [
+              -0.02,
+              6.22
+            ],
+            [
+              0.11,
+              6.64
+            ],
+            [
+              0.93,
+              6.73
+            ],
+            [
+              1.57,
+              8.9
+            ],
+            [
+              2.06,
+              8.9
+            ],
+            [
+              1.04,
+              6.03
+            ]
+          ]
+        }
+      ],
+      "people": [
+        {
+          "id": "person_1",
+          "comment": "Standing across the route to the rug.",
+          "position": [
+            2.6,
+            1.9
+          ],
+          "phi": 199.8,
+          "f": 1.2,
+          "b": 0.6,
+          "s": 0.4
+        },
+        {
+          "id": "person_2",
+          "comment": "Standing beside the route to the rug.",
+          "position": [
+            1.62,
+            4.08
+          ],
+          "phi": 19.8,
+          "f": 1.2,
+          "b": 0.6,
+          "s": 0.4
+        }
+      ]
+    },
+    {
+      "id": "tc_08",
+      "comment": "Drive to the rack.",
+      "start_world": [
+        -2.14,
+        1.34
+      ],
+      "goal_object": "rack",
+      "restricted_zones": [
+        {
+          "id": "zone_kitchen",
+          "comment": "Working space in front of the kitchen units, where someone stands to cook.",
+          "polygon": [
+            [
+              -0.24,
+              -1.29
+            ],
+            [
+              -0.16,
+              -0.03
+            ],
+            [
+              0.25,
+              -0.11
+            ],
+            [
+              0.17,
+              -0.91
+            ],
+            [
+              0.9,
+              -1.05
+            ],
+            [
+              0.9,
+              -1.42
+            ]
+          ]
+        },
+        {
+          "id": "zone_dining",
+          "comment": "Floor around the dining table, where chairs get pushed back.",
+          "polygon": [
+            [
+              -0.53,
+              2.35
+            ],
+            [
+              1.26,
+              2.26
+            ],
+            [
+              1.66,
+              3.61
+            ],
+            [
+              1.08,
+              3.67
+            ]
+          ]
+        },
+        {
+          "id": "zone_living",
+          "comment": "The living room's open floor, in front of the sofa.",
+          "polygon": [
+            [
+              -0.02,
+              6.22
+            ],
+            [
+              0.11,
+              6.64
+            ],
+            [
+              0.93,
+              6.73
+            ],
+            [
+              1.57,
+              8.9
+            ],
+            [
+              2.06,
+              8.9
+            ],
+            [
+              1.04,
+              6.03
+            ]
+          ]
+        }
+      ],
+      "people": [
+        {
+          "id": "person_1",
+          "comment": "Standing across the route to the rack.",
+          "position": [
+            -0.29,
+            2.17
+          ],
+          "phi": 110.9,
+          "f": 1.2,
+          "b": 0.6,
+          "s": 0.4
+        },
+        {
+          "id": "person_2",
+          "comment": "Standing beside the route to the rack.",
+          "position": [
+            1.32,
+            2.44
+          ],
+          "phi": 290.9,
+          "f": 1.2,
+          "b": 0.6,
+          "s": 0.4
+        }
+      ]
+    },
+    {
+      "id": "tc_09",
+      "comment": "Drive to the door.",
+      "start_world": [
+        3.08,
+        3.33
+      ],
+      "goal_object": "door",
+      "restricted_zones": [
+        {
+          "id": "zone_kitchen",
+          "comment": "Working space in front of the kitchen units, where someone stands to cook.",
+          "polygon": [
+            [
+              -0.24,
+              -1.29
+            ],
+            [
+              -0.16,
+              -0.03
+            ],
+            [
+              0.25,
+              -0.11
+            ],
+            [
+              0.17,
+              -0.91
+            ],
+            [
+              0.9,
+              -1.05
+            ],
+            [
+              0.9,
+              -1.42
+            ]
+          ]
+        },
+        {
+          "id": "zone_dining",
+          "comment": "Floor around the dining table, where chairs get pushed back.",
+          "polygon": [
+            [
+              -0.53,
+              2.35
+            ],
+            [
+              1.26,
+              2.26
+            ],
+            [
+              1.66,
+              3.61
+            ],
+            [
+              1.08,
+              3.67
+            ]
+          ]
+        },
+        {
+          "id": "zone_living",
+          "comment": "The living room's open floor, in front of the sofa.",
+          "polygon": [
+            [
+              -0.02,
+              6.22
+            ],
+            [
+              0.11,
+              6.64
+            ],
+            [
+              0.93,
+              6.73
+            ],
+            [
+              1.57,
+              8.9
+            ],
+            [
+              2.06,
+              8.9
+            ],
+            [
+              1.04,
+              6.03
+            ]
+          ]
+        }
+      ],
+      "people": [
+        {
+          "id": "person_1",
+          "comment": "Standing across the route to the door.",
+          "position": [
+            1.32,
+            2.44
+          ],
+          "phi": 290.8,
+          "f": 1.2,
+          "b": 0.6,
+          "s": 0.4
+        },
+        {
+          "id": "person_2",
+          "comment": "Standing beside the route to the door.",
+          "position": [
+            -0.38,
+            2.17
+          ],
+          "phi": 110.8,
+          "f": 1.2,
+          "b": 0.6,
+          "s": 0.4
+        }
+      ]
+    },
+    {
+      "id": "tc_10",
+      "comment": "Drive to the chair.",
+      "start_world": [
+        -1.72,
+        5.65
+      ],
+      "goal_object": "chair",
+      "restricted_zones": [
+        {
+          "id": "zone_kitchen",
+          "comment": "Working space in front of the kitchen units, where someone stands to cook.",
+          "polygon": [
+            [
+              -0.24,
+              -1.29
+            ],
+            [
+              -0.16,
+              -0.03
+            ],
+            [
+              0.25,
+              -0.11
+            ],
+            [
+              0.17,
+              -0.91
+            ],
+            [
+              0.9,
+              -1.05
+            ],
+            [
+              0.9,
+              -1.42
+            ]
+          ]
+        },
+        {
+          "id": "zone_dining",
+          "comment": "Floor around the dining table, where chairs get pushed back.",
+          "polygon": [
+            [
+              -0.53,
+              2.35
+            ],
+            [
+              1.26,
+              2.26
+            ],
+            [
+              1.66,
+              3.61
+            ],
+            [
+              1.08,
+              3.67
+            ]
+          ]
+        },
+        {
+          "id": "zone_living",
+          "comment": "The living room's open floor, in front of the sofa.",
+          "polygon": [
+            [
+              -0.02,
+              6.22
+            ],
+            [
+              0.11,
+              6.64
+            ],
+            [
+              0.93,
+              6.73
+            ],
+            [
+              1.57,
+              8.9
+            ],
+            [
+              2.06,
+              8.9
+            ],
+            [
+              1.04,
+              6.03
+            ]
+          ]
+        }
+      ],
+      "people": [
+        {
+          "id": "person_1",
+          "comment": "Standing across the route to the chair.",
+          "position": [
+            -0.8,
+            5.47
+          ],
+          "phi": 79.8,
+          "f": 1.2,
+          "b": 0.6,
+          "s": 0.4
+        },
+        {
+          "id": "person_2",
+          "comment": "Standing beside the route to the chair.",
+          "position": [
+            0.13,
+            5.33
+          ],
+          "phi": 259.8,
+          "f": 1.2,
+          "b": 0.6,
+          "s": 0.4
+        }
+      ]
+    }
+  ]
+}

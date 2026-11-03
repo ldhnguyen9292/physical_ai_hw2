@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>NYCU Physical AI HW2 Planning Ontology — Ontology Reference</title>
+<style>
+:root{--ink:#1f2937;--muted:#64748b;--line:#dbe3ec;--panel:#f8fafc;--accent:#1d4ed8}*{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--ink);line-height:1.6}header{background:#0f172a;color:white;padding:3.2rem max(1.5rem,calc((100% - 980px)/2)) 2.6rem}header h1{margin:0 0 .5rem;font-size:2.1rem}header p{max-width:760px;color:#dbeafe;margin:.4rem 0}main{max-width:980px;margin:auto;padding:2rem 1.5rem 4rem}nav{display:flex;gap:1rem;flex-wrap:wrap;padding:1rem 0 1.5rem;border-bottom:1px solid var(--line)}nav a{color:var(--accent);font-weight:650;text-decoration:none}h2{margin-top:2.4rem;border-bottom:1px solid var(--line);padding-bottom:.45rem}.term{padding:1rem 1.1rem;margin:1rem 0;border:1px solid var(--line);border-radius:10px;background:white}.term h3{margin:0 0 .35rem;font-size:1.05rem}code{background:#eef2ff;padding:.08rem .3rem;border-radius:4px}.meta{color:#334155;margin:.5rem 0}.iri{font:12px ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--muted);overflow-wrap:anywhere;margin-top:.5rem}.note{background:var(--panel);border-left:4px solid #94a3b8;padding:1rem 1.1rem;margin:1.4rem 0}footer{color:var(--muted);font-size:.9rem;margin-top:3rem;border-top:1px solid var(--line);padding-top:1rem}
+</style></head><body>
+<header><h1>NYCU Physical AI HW2 Planning Ontology</h1><p>Vocabulary used in HW2 to describe an RRT planning run, including its nodes, candidate edges, accepted tree edges, final path, and measured social and geometric properties.</p><p><strong>Ontology Reference</strong> · namespace <code>hw2:</code> &lt;http://taica.course/hw2/ontology#&gt;</p></header>
+<main><nav><a href="#overview">Overview</a><a href="#classes">Classes</a><a href="#properties">Properties</a></nav>
+<section id="overview"><h2>Overview</h2><p>This reference documents the vocabulary used by the HW2 RDF planning record. The authoritative machine-readable ontology is <code>ontology/schema.ttl</code>; this page presents the same classes and properties in a form that is easier to browse while implementing the assignment.</p><div class="note"><strong>How to use this page.</strong> Look up a term here when you need its intended meaning, domain, range, or class relationship. Use the exact <code>hw2:</code> term shown in your Turtle output.</div></section>
+<section id="classes"><h2>Classes</h2><article class="term" id="Edge">
+<h3>edge <code>hw2:Edge</code></h3>
+<p>A candidate connection between two RRT nodes that was considered by the planner.</p>
+<div class="iri">http://taica.course/hw2/ontology#Edge</div>
+</article>
+<article class="term" id="RestrictedZone">
+<h3>restricted zone <code>hw2:RestrictedZone</code></h3>
+<p>A spatial region designated as restricted in the current test case. Every zone defined by the case must be declared, even when no edge enters it, and the individual&#x27;s IRI local name must equal the zone&#x27;s test-case id.</p>
+<div class="iri">http://taica.course/hw2/ontology#RestrictedZone</div>
+</article>
+<article class="term" id="Node">
+<h3>node <code>hw2:Node</code></h3>
+<p>A sampled or constructed point represented as a node in the RRT.</p>
+<div class="iri">http://taica.course/hw2/ontology#Node</div>
+</article>
+<article class="term" id="PathEdge">
+<h3>path edge <code>hw2:PathEdge</code></h3>
+<p>An accepted RRT tree edge that belongs to the final path claimed by the planner.</p><div class="meta"><b>Subclass of:</b> <code>hw2:RRTTreeEdge</code></div>
+<div class="iri">http://taica.course/hw2/ontology#PathEdge</div>
+</article>
+<article class="term" id="PersonalSpace">
+<h3>personal space <code>hw2:PersonalSpace</code></h3>
+<p>A personal-space region associated with a person in the current test case. Every person defined by the case must be declared, even when no edge enters the space, and the individual&#x27;s IRI local name must equal the person&#x27;s test-case id.</p>
+<div class="iri">http://taica.course/hw2/ontology#PersonalSpace</div>
+</article>
+<article class="term" id="PlanningRun">
+<h3>planning run <code>hw2:PlanningRun</code></h3>
+<p>One execution of the planner for a single test case, including its root, goal, and recorded planning result.</p>
+<div class="iri">http://taica.course/hw2/ontology#PlanningRun</div>
+</article>
+<article class="term" id="RRTTreeEdge">
+<h3>RRT tree edge <code>hw2:RRTTreeEdge</code></h3>
+<p>A candidate edge that was accepted by the planner and added to the RRT tree.</p><div class="meta"><b>Subclass of:</b> <code>hw2:Edge</code></div>
+<div class="iri">http://taica.course/hw2/ontology#RRTTreeEdge</div>
+</article></section>
+<section id="properties"><h2>Properties</h2><article class="term" id="containsGoal">
+<h3>contains goal <code>hw2:containsGoal</code></h3>
+<p>Whether this restricted zone contains the goal node of the current planning run.</p><div class="meta"><b>Domain:</b> <code>hw2:RestrictedZone</code> &nbsp; <b>Range:</b> <code>xsd:boolean</code></div>
+<div class="iri">http://taica.course/hw2/ontology#containsGoal</div>
+</article>
+<article class="term" id="entersRestrictedZone">
+<h3>enters restricted zone <code>hw2:entersRestrictedZone</code></h3>
+<p>Relates an edge to each restricted zone that the edge enters.</p><div class="meta"><b>Domain:</b> <code>hw2:Edge</code> &nbsp; <b>Range:</b> <code>hw2:RestrictedZone</code></div>
+<div class="iri">http://taica.course/hw2/ontology#entersRestrictedZone</div>
+</article>
+<article class="term" id="entersPersonalSpace">
+<h3>enters personal space <code>hw2:entersPersonalSpace</code></h3>
+<p>Relates an edge to each personal-space region that the edge enters.</p><div class="meta"><b>Domain:</b> <code>hw2:Edge</code> &nbsp; <b>Range:</b> <code>hw2:PersonalSpace</code></div>
+<div class="iri">http://taica.course/hw2/ontology#entersPersonalSpace</div>
+</article>
+<article class="term" id="goalObject">
+<h3>goal object <code>hw2:goalObject</code></h3>
+<p>The semantic object category that this planning run is attempting to reach.</p><div class="meta"><b>Domain:</b> <code>hw2:PlanningRun</code> &nbsp; <b>Range:</b> <code>xsd:string</code></div>
+<div class="iri">http://taica.course/hw2/ontology#goalObject</div>
+</article>
+<article class="term" id="hasEndNode">
+<h3>has end node <code>hw2:hasEndNode</code></h3>
+<p>The RRT node at which this directed edge ends.</p><div class="meta"><b>Domain:</b> <code>hw2:Edge</code> &nbsp; <b>Range:</b> <code>hw2:Node</code></div>
+<div class="iri">http://taica.course/hw2/ontology#hasEndNode</div>
+</article>
+<article class="term" id="hasGoalNode">
+<h3>has goal node <code>hw2:hasGoalNode</code></h3>
+<p>The node representing the position toward which this run planned.</p><div class="meta"><b>Domain:</b> <code>hw2:PlanningRun</code> &nbsp; <b>Range:</b> <code>hw2:Node</code></div>
+<div class="iri">http://taica.course/hw2/ontology#hasGoalNode</div>
+</article>
+<article class="term" id="hasRootNode">
+<h3>has root node <code>hw2:hasRootNode</code></h3>
+<p>The root node from which the RRT is grown.</p><div class="meta"><b>Domain:</b> <code>hw2:PlanningRun</code> &nbsp; <b>Range:</b> <code>hw2:Node</code></div>
+<div class="iri">http://taica.course/hw2/ontology#hasRootNode</div>
+</article>
+<article class="term" id="hasStartNode">
+<h3>has start node <code>hw2:hasStartNode</code></h3>
+<p>The RRT node at which this directed edge starts.</p><div class="meta"><b>Domain:</b> <code>hw2:Edge</code> &nbsp; <b>Range:</b> <code>hw2:Node</code></div>
+<div class="iri">http://taica.course/hw2/ontology#hasStartNode</div>
+</article>
+<article class="term" id="obstacleClearance">
+<h3>obstacle clearance <code>hw2:obstacleClearance</code></h3>
+<p>The minimum distance, in metres, from this edge to the nearest obstacle according to the planner&#x27;s map.</p><div class="meta"><b>Domain:</b> <code>hw2:Edge</code> &nbsp; <b>Range:</b> <code>xsd:double</code></div>
+<div class="iri">http://taica.course/hw2/ontology#obstacleClearance</div>
+</article>
+<article class="term" id="worldX">
+<h3>world X <code>hw2:worldX</code></h3>
+<p>The node&#x27;s X coordinate in the Habitat world frame, measured in metres.</p><div class="meta"><b>Domain:</b> <code>hw2:Node</code> &nbsp; <b>Range:</b> <code>xsd:double</code></div>
+<div class="iri">http://taica.course/hw2/ontology#worldX</div>
+</article>
+<article class="term" id="worldZ">
+<h3>world Z <code>hw2:worldZ</code></h3>
+<p>The node&#x27;s Z coordinate in the Habitat world frame, measured in metres.</p><div class="meta"><b>Domain:</b> <code>hw2:Node</code> &nbsp; <b>Range:</b> <code>xsd:double</code></div>
+<div class="iri">http://taica.course/hw2/ontology#worldZ</div>
+</article></section>
+<footer>Generated from <code>ontology/schema.ttl</code> for NYCU Physical AI HW2.</footer></main></body></html>

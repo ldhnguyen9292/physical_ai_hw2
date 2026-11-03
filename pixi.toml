@@ -1,0 +1,32 @@
+# pixi workspace for hw2 (semantic navigation + path-exploration ontology).
+
+[workspace]
+name = "Physical-AI-HW2"
+version = "0.1.0"
+channels = ["conda-forge", "aihabitat"]
+platforms = ["linux-64", "osx-arm64"]
+
+[feature.habitat.dependencies]
+python = "3.9.*"
+cmake = "3.27.*"
+numpy = "1.26.4.*"
+scipy = "*"
+habitat-sim = { version = "0.3.3.*", channel = "aihabitat" }
+withbullet = { version = "*", channel = "aihabitat" }
+gdown = "*"
+
+[feature.habitat.pypi-dependencies]
+opencv-python = "==4.8.0.76"
+pillow = "*"
+rdflib = "*"
+pyshacl = "*"
+
+[feature.habitat.tasks]
+smoke = { cmd = "python -c \"import habitat_sim; print('habitat-sim', habitat_sim.__version__); print('bullet build:', habitat_sim.built_with_bullet)\"" }
+fetch-replica = { cmd = "mkdir -p replica_v1 && gdown https://drive.google.com/uc?id=1zHA2AYRtJOmlRaHNuXOvC_OaVxHe56M4 -O replica_v1/apartment_0.zip && unzip -o replica_v1/apartment_0.zip -d replica_v1 && rm replica_v1/apartment_0.zip" }
+process-map = { cmd = "python part1_planning/map_processor.py" }
+part1 = { cmd = "python part1_planning/main.py", depends-on = ["process-map"] }
+part2 = { cmd = "python part2_verification/main.py" }
+
+[environments]
+habitat = { features = ["habitat"], solve-group = "habitat" }

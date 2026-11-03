@@ -1,0 +1,96 @@
+@prefix hw2: <http://taica.course/hw2/ontology#> .
+@prefix sh:  <http://www.w3.org/ns/shacl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+hw2:RunStructureShape a sh:NodeShape ;
+    sh:targetClass hw2:PlanningRun ;
+
+    sh:property [
+        sh:path hw2:goalObject ; sh:datatype xsd:string ;
+        sh:minCount 1 ; sh:maxCount 1 ;
+        sh:message "The run does not say which object it was sent to."@en ;
+    ] ;
+    sh:property [
+        sh:path hw2:hasRootNode ; sh:class hw2:Node ;
+        sh:minCount 1 ; sh:maxCount 1 ;
+        sh:message "The run does not name the tree's root node."@en ;
+    ] ;
+    sh:property [
+        sh:path hw2:hasGoalNode ; sh:class hw2:Node ;
+        sh:minCount 1 ; sh:maxCount 1 ;
+        sh:message "The run does not name the goal point it planned towards."@en ;
+    ] .
+
+hw2:NodeStructureShape a sh:NodeShape ;
+    sh:targetClass hw2:Node ;
+
+    sh:property [
+        sh:path hw2:worldX ; sh:datatype xsd:double ;
+        sh:minCount 1 ; sh:maxCount 1 ;
+        sh:message "RRT node is missing its world X coordinate."@en ;
+    ] ;
+    sh:property [
+        sh:path hw2:worldZ ; sh:datatype xsd:double ;
+        sh:minCount 1 ; sh:maxCount 1 ;
+        sh:message "RRT node is missing its world Z coordinate."@en ;
+    ] ;
+    # Nodes are points on the fixed 500 x 500 planning grid. These bounds also
+    # reject NaN and infinities before coordinates can reach Habitat.
+    sh:property [
+        sh:path hw2:worldX ;
+        sh:minInclusive "-5.8313583476480435"^^xsd:double ;
+        sh:maxExclusive "9.059884502966879"^^xsd:double ;
+        sh:message "RRT node's world X coordinate is outside the planning grid."@en ;
+    ] ;
+    sh:property [
+        sh:path hw2:worldZ ;
+        sh:minInclusive "-4.949014030717765"^^xsd:double ;
+        sh:maxExclusive "9.942228819897156"^^xsd:double ;
+        sh:message "RRT node's world Z coordinate is outside the planning grid."@en ;
+    ] .
+
+hw2:EdgeStructureShape a sh:NodeShape ;
+    sh:targetClass hw2:Edge ;
+
+    sh:property [
+        sh:path hw2:hasStartNode ; sh:class hw2:Node ;
+        sh:minCount 1 ; sh:maxCount 1 ;
+        sh:message "Edge does not name the node it starts from."@en ;
+    ] ;
+    sh:property [
+        sh:path hw2:hasEndNode ; sh:class hw2:Node ;
+        sh:minCount 1 ; sh:maxCount 1 ;
+        sh:message "Edge does not name the node it ends at."@en ;
+    ] ;
+    sh:property [
+        sh:path hw2:obstacleClearance ; sh:datatype xsd:double ;
+        sh:minCount 1 ; sh:maxCount 1 ;
+        sh:message "Edge does not record the clearance it measured."@en ;
+    ] .
+
+hw2:RRTTreeEdgeStructureShape a sh:NodeShape ;
+    sh:targetClass hw2:RRTTreeEdge ;
+    sh:class hw2:Edge ;
+    sh:message "Edge is typed hw2:RRTTreeEdge but not hw2:Edge; every accepted candidate must also carry its base type."@en .
+
+hw2:PathEdgeStructureShape a sh:NodeShape ;
+    sh:targetClass hw2:PathEdge ;
+
+    sh:class hw2:RRTTreeEdge ;
+    sh:message "Edge is claimed as part of the path but was never kept in the tree."@en ;
+
+    sh:property [
+        sh:path ( hw2:hasEndNode [ sh:inversePath hw2:hasStartNode ] ) ;
+        sh:qualifiedValueShape [ sh:class hw2:PathEdge ] ;
+        sh:qualifiedMaxCount 1 ;
+        sh:message "The claimed path forks: this edge has more than one successor on it."@en ;
+    ] .
+
+hw2:RestrictedZoneStructureShape a sh:NodeShape ;
+    sh:targetClass hw2:RestrictedZone ;
+
+    sh:property [
+        sh:path hw2:containsGoal ; sh:datatype xsd:boolean ;
+        sh:minCount 1 ; sh:maxCount 1 ;
+        sh:message "Zone does not say whether the run's goal is inside it."@en ;
+    ] .

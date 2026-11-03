@@ -1,0 +1,152 @@
+@prefix hw2:  <http://taica.course/hw2/ontology#> .
+@prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+#################################################################
+# Ontology
+#################################################################
+
+<http://taica.course/hw2/ontology>
+    a rdfs:Resource ;
+    rdfs:label "NYCU Physical AI HW2 Planning Ontology"@en ;
+    rdfs:comment "Vocabulary used in HW2 to describe an RRT planning run, including its nodes, candidate edges, accepted tree edges, final path, and measured social and geometric properties."@en .
+
+
+#################################################################
+# Classes
+#################################################################
+
+hw2:PlanningRun
+    a rdfs:Class ;
+    rdfs:label "planning run"@en ;
+    rdfs:comment "One execution of the planner for a single test case, including its root, goal, and recorded planning result."@en .
+
+hw2:Node
+    a rdfs:Class ;
+    rdfs:label "node"@en ;
+    rdfs:comment "A sampled or constructed point represented as a node in the RRT."@en .
+
+hw2:Edge
+    a rdfs:Class ;
+    rdfs:label "edge"@en ;
+    rdfs:comment "A candidate connection between two RRT nodes that was considered by the planner."@en .
+
+hw2:RRTTreeEdge
+    a rdfs:Class ;
+    rdfs:subClassOf hw2:Edge ;
+    rdfs:label "RRT tree edge"@en ;
+    rdfs:comment "A candidate edge that was accepted by the planner and added to the RRT tree."@en .
+
+hw2:PathEdge
+    a rdfs:Class ;
+    rdfs:subClassOf hw2:RRTTreeEdge ;
+    rdfs:label "path edge"@en ;
+    rdfs:comment "An accepted RRT tree edge that belongs to the final path claimed by the planner."@en .
+
+hw2:PersonalSpace
+    a rdfs:Class ;
+    rdfs:label "personal space"@en ;
+    rdfs:comment "A personal-space region associated with a person in the current test case. Every person defined by the case must be declared, even when no edge enters the space, and the individual's IRI local name must equal the person's test-case id."@en .
+
+hw2:RestrictedZone
+    a rdfs:Class ;
+    rdfs:label "restricted zone"@en ;
+    rdfs:comment "A spatial region designated as restricted in the current test case. Every zone defined by the case must be declared, even when no edge enters it, and the individual's IRI local name must equal the zone's test-case id."@en .
+
+
+#################################################################
+# PlanningRun properties
+#################################################################
+
+hw2:goalObject
+    a rdf:Property ;
+    rdfs:label "goal object"@en ;
+    rdfs:comment "The semantic object category that this planning run is attempting to reach."@en ;
+    rdfs:domain hw2:PlanningRun ;
+    rdfs:range xsd:string .
+
+hw2:hasRootNode
+    a rdf:Property ;
+    rdfs:label "has root node"@en ;
+    rdfs:comment "The root node from which the RRT is grown."@en ;
+    rdfs:domain hw2:PlanningRun ;
+    rdfs:range hw2:Node .
+
+hw2:hasGoalNode
+    a rdf:Property ;
+    rdfs:label "has goal node"@en ;
+    rdfs:comment "The node representing the position toward which this run planned."@en ;
+    rdfs:domain hw2:PlanningRun ;
+    rdfs:range hw2:Node .
+
+
+#################################################################
+# Node properties
+#################################################################
+
+hw2:worldX
+    a rdf:Property ;
+    rdfs:label "world X"@en ;
+    rdfs:comment "The node's X coordinate in the Habitat world frame, measured in metres."@en ;
+    rdfs:domain hw2:Node ;
+    rdfs:range xsd:double .
+
+hw2:worldZ
+    a rdf:Property ;
+    rdfs:label "world Z"@en ;
+    rdfs:comment "The node's Z coordinate in the Habitat world frame, measured in metres."@en ;
+    rdfs:domain hw2:Node ;
+    rdfs:range xsd:double .
+
+
+#################################################################
+# Edge properties: facts measured for candidate edges
+#################################################################
+
+hw2:hasStartNode
+    a rdf:Property ;
+    rdfs:label "has start node"@en ;
+    rdfs:comment "The RRT node at which this directed edge starts."@en ;
+    rdfs:domain hw2:Edge ;
+    rdfs:range hw2:Node .
+
+hw2:hasEndNode
+    a rdf:Property ;
+    rdfs:label "has end node"@en ;
+    rdfs:comment "The RRT node at which this directed edge ends."@en ;
+    rdfs:domain hw2:Edge ;
+    rdfs:range hw2:Node .
+
+hw2:obstacleClearance
+    a rdf:Property ;
+    rdfs:label "obstacle clearance"@en ;
+    rdfs:comment "The minimum distance, in metres, from this edge to the nearest obstacle according to the planner's map."@en ;
+    rdfs:domain hw2:Edge ;
+    rdfs:range xsd:double .
+
+hw2:entersPersonalSpace
+    a rdf:Property ;
+    rdfs:label "enters personal space"@en ;
+    rdfs:comment "Relates an edge to each personal-space region that the edge enters."@en ;
+    rdfs:domain hw2:Edge ;
+    rdfs:range hw2:PersonalSpace .
+
+hw2:entersRestrictedZone
+    a rdf:Property ;
+    rdfs:label "enters restricted zone"@en ;
+    rdfs:comment "Relates an edge to each restricted zone that the edge enters."@en ;
+    rdfs:domain hw2:Edge ;
+    rdfs:range hw2:RestrictedZone .
+
+
+#################################################################
+# RestrictedZone properties
+#################################################################
+
+hw2:containsGoal
+    a rdf:Property ;
+    rdfs:label "contains goal"@en ;
+    rdfs:comment "Whether this restricted zone contains the goal node of the current planning run."@en ;
+    rdfs:domain hw2:RestrictedZone ;
+    rdfs:range xsd:boolean .

@@ -1,0 +1,10 @@
+@prefix hw2: <http://taica.course/hw2/ontology#> .
+@prefix sh:  <http://www.w3.org/ns/shacl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+
+# TODO: declare hw2:FeasibleEdgeShape, a sh:NodeShape targeting hw2:Edge, with:
+#   F1: obstacle clearance
+#   F2: restricted zones
+#   F3: personal space
+
