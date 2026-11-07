@@ -24,7 +24,10 @@ GOAL_CLEARANCE = 0.25   # the goal must be a bit freer than THETA
 GOAL_REACH = 0.7        # grader allows 1.0 m from the object; keep a margin
 STEP = 0.3              # RRT step size (metres)
 GOAL_BIAS = 0.1         # how often the sampler picks the goal itself
-MAX_ITERS = 3000        # RRT iterations per case
+MAX_ITERS = 5000        # RRT iterations per case
+SAMPLE_CLEARANCE = 0.25 # RRT samples are drawn only where the floor is this free
+MIN_INSTANCE_POINTS = 15  # smaller clusters of a goal class are mislabelled stray points
+INSTANCE_CELL = 0.10    # grid cell (metres) used to group goal points into objects
 
 
 # Geometry
@@ -76,30 +79,67 @@ def edge_enters_personal_space(a, b, person):
     return bool(np.any(point_in_personal_space((points[:, 0], points[:, 1]), person)))
 
 
-# Goal selection
-def choose_goal(case, obstacles_xz, obstacles_tree, colors):
-    # 1. Points of the goal object (same colour filter as Task 1)
-    target = np.all(colors == semantic_color(case.goal_object), axis=1)
-    if not target.any():
-        return None
-    goal_tree = cKDTree(obstacles_xz[target])
-
-    # 2. Candidates: the centre of every pixel of the 500 x 500 map
+# Grid of free cells (used by goal selection and by the RRT sampler)
+def grid_cells(obstacles_tree):
+    # The centre of every pixel of the 500 x 500 map, and its clearance
     size = PROJECTION.size
     px, pz = np.meshgrid(np.arange(size), np.arange(size))
     cx, cz = pixel_to_world(px.ravel() + 0.5, pz.ravel() + 0.5)
-    cands = np.column_stack((cx, cz))
+    clear, _ = obstacles_tree.query(np.column_stack((cx, cz)))
+    return cx, cz, clear
 
-    # 3. For every candidate: distance to any obstacle, and to the goal object
-    clear, _ = obstacles_tree.query(cands)
-    dgoal, _ = goal_tree.query(cands)
+
+def outside_people(case, cx, cz):
+    # True for cells outside every personal space of the case
+    outside = np.ones(len(cx), dtype=bool)
+    for person in case.people:
+        outside &= ~point_in_personal_space((cx, cz), person)
+    return outside
+
+
+def connected_to_start(case, free, cx, cz):
+    # Flood fill the free cells; keep the region that holds the start
+    size = PROJECTION.size
+    labels, _ = ndimage.label(free.reshape(size, size), structure=np.ones((3, 3)))
+    labels = labels.ravel()
+    start_label = labels[np.argmin(np.hypot(cx - case.start_world[0], cz - case.start_world[1]))]
+    return (labels == start_label) & (start_label > 0)
+
+
+def main_instances(points):
+    # Group the points of one class into objects (8-connected cells of
+    # INSTANCE_CELL metres) and keep the objects with enough points. A cluster
+    # of 1-8 points is a mislabelled stray point, not a real object.
+    gx = np.floor((points[:, 0] - points[:, 0].min()) / INSTANCE_CELL).astype(int)
+    gz = np.floor((points[:, 1] - points[:, 1].min()) / INSTANCE_CELL).astype(int)
+    grid = np.zeros((gx.max() + 1, gz.max() + 1), dtype=bool)
+    grid[gx, gz] = True
+    labels, _ = ndimage.label(grid, structure=np.ones((3, 3)))
+    point_label = labels[gx, gz]
+    sizes = np.bincount(point_label)
+    keep = sizes[point_label] >= MIN_INSTANCE_POINTS
+    if not keep.any():                      # nothing big enough: keep the largest object
+        keep = point_label == np.argmax(sizes[1:]) + 1
+    return keep
+
+
+# Goal selection
+def choose_goal(case, obstacles_xz, obstacles_tree, colors):
+    # 1. Points of the goal object (same colour filter as Task 1), real objects only
+    target = np.all(colors == semantic_color(case.goal_object), axis=1)
+    if not target.any():
+        return None
+    goal_points = obstacles_xz[target]
+    goal_tree = cKDTree(goal_points[main_instances(goal_points)])
+
+    # 2. Candidates: the centre of every pixel of the 500 x 500 map, and
+    # 3. for every candidate: distance to any obstacle, and to the goal object
+    cx, cz, clear = grid_cells(obstacles_tree)
+    dgoal, _ = goal_tree.query(np.column_stack((cx, cz)))
 
     # 4. Cells outside every personal space
-    outside_people = np.ones(len(cands), dtype=bool)
-    for person in case.people:
-        outside_people &= ~point_in_personal_space((cx, cz), person)
-    start_cell = np.argmin(np.hypot(cx - case.start_world[0], cz - case.start_world[1]))
-    near_object = (clear >= GOAL_CLEARANCE) & (dgoal <= GOAL_REACH) & outside_people
+    outside = outside_people(case, cx, cz)
+    near_object = (clear >= GOAL_CLEARANCE) & (dgoal <= GOAL_REACH) & outside
 
     # 5. Keep only cells connected to the start, so the goal is not chosen on the
     #    other side of a wall or inside a closed area. Try wide corridors first
@@ -107,10 +147,7 @@ def choose_goal(case, obstacles_xz, obstacles_tree, colors):
     #    one with the widest way in: easier for the RRT, safer for the robot.
     ok = near_object
     for width in (0.40, 0.35, 0.30, 0.25, 0.20, THETA):
-        free = (clear >= width) & outside_people
-        labels, _ = ndimage.label(free.reshape(size, size), structure=np.ones((3, 3)))
-        labels = labels.ravel()
-        reachable = near_object & (labels == labels[start_cell]) & (labels[start_cell] > 0)
+        reachable = near_object & connected_to_start(case, (clear >= width) & outside, cx, cz)
         if reachable.any():
             ok = reachable
             break
@@ -122,6 +159,20 @@ def choose_goal(case, obstacles_xz, obstacles_tree, colors):
     idx = np.flatnonzero(ok)
     best = idx[np.lexsort((dstart[idx], dgoal[idx]))[0]]
     return (float(cx[best]), float(cz[best])), float(clear[best]), float(dgoal[best])
+
+
+def sampling_cells(case, obstacles_tree):
+    # Where the RRT draws its random samples: open floor (clearance >=
+    # SAMPLE_CLEARANCE) that the start can reach, outside personal spaces.
+    # Samples in open space keep the tree, and so the path, away from furniture;
+    # narrow passages are still crossed because edges only need THETA.
+    cx, cz, clear = grid_cells(obstacles_tree)
+    outside = outside_people(case, cx, cz)
+    reachable = connected_to_start(case, (clear >= THETA) & outside, cx, cz)
+    cells = reachable & (clear >= SAMPLE_CLEARANCE)
+    if not cells.any():
+        cells = reachable if reachable.any() else np.ones(len(cx), dtype=bool)
+    return np.column_stack((cx[cells], cz[cells]))
 
 
 # RDF
@@ -154,7 +205,7 @@ def add_edge(g, edge_id, start_id, end_id, clearance, zones, people):
 
 
 # RRT
-def plan_case(case, goal_xz, tree, bounds, rules, rng):
+def plan_case(case, goal_xz, tree, sample_cells, rules, rng):
     """Grow an RRT from the start to goal_xz and return the RDF record."""
     record = Graph()
     record.bind("hw2", HW2)
@@ -198,11 +249,14 @@ def plan_case(case, goal_xz, tree, bounds, rules, rng):
 
     reached = False
     for _ in range(MAX_ITERS):
-        # 1. Sample a point (sometimes the goal itself)
+        # 1. Sample a point (sometimes the goal itself), otherwise a random
+        #    point inside a random open-floor cell
         if rng.random() < GOAL_BIAS:
             sample = goal_xz
         else:
-            sample = (rng.uniform(bounds[0], bounds[1]), rng.uniform(bounds[2], bounds[3]))
+            cell_x, cell_z = sample_cells[rng.randrange(len(sample_cells))]
+            half = PROJECTION.resolution / 2
+            sample = (cell_x + rng.uniform(-half, half), cell_z + rng.uniform(-half, half))
 
         # 2. Nearest tree node
         near_id, near = min(tree_nodes, key=lambda n: math.dist(n[1], sample))
@@ -298,14 +352,14 @@ def main():
         x, z = pixel_to_world(x_img, z_img)
         obstacles_xz = np.column_stack((x, z))
         tree = cKDTree(obstacles_xz)
-        bounds = (x.min(), x.max(), z.min(), z.max())
         rules = Graph().parse(paths.ONTOLOGY_RULES, format="turtle")
 
         goal = choose_goal(case, obstacles_xz, tree, colors)
         if goal is None:
             print(f"{case.id}: no free point found near any {case.goal_object}")
         else:
-            record, reached, n_edges, n_tree = plan_case(case, goal[0], tree, bounds, rules, rng)
+            sample_cells = sampling_cells(case, tree)
+            record, reached, n_edges, n_tree = plan_case(case, goal[0], tree, sample_cells, rules, rng)
             record.serialize(destination=record_path, format="turtle")
             print(f"{case.id} {case.goal_object}: goal=({goal[0][0]:.2f}, {goal[0][1]:.2f}) "
                   f"reached={reached} candidates={n_edges} tree_nodes={n_tree}")
