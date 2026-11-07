@@ -8,3 +8,31 @@
 #   F2: restricted zones
 #   F3: personal space
 
+hw2:FeasibleEdgeShape
+    a sh:NodeShape ;
+    sh:targetClass hw2:Edge ;
+
+    # F1
+    sh:property [
+        sh:path hw2:obstacleClearance ;
+        sh:minCount 1 ;
+        sh:datatype xsd:double ;
+        sh:minInclusive "0.15"^^xsd:double ;
+    ] ;
+
+    # F2
+    sh:property [
+        sh:path hw2:entersRestrictedZone ;
+        sh:node [
+            sh:property  [
+                sh:path hw2:containsGoal;
+                sh:hasValue true ;
+            ]
+        ] ;
+    ] ;
+
+    # F3
+    sh:property [
+        sh:path hw2:entersPersonalSpace ;
+        sh:maxCount 0
+    ] .

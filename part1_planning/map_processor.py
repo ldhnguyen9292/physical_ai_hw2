@@ -1,11 +1,12 @@
 import argparse
 import os
 import sys
+import numpy as np
 
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
 
 import paths
-from scene import PROJECTION, load_scan, save_map, world_to_pixel
+from scene import PROJECTION, load_scan, save_map, world_to_pixel, SEMANTIC_COLORS
 
 
 def main():
@@ -29,8 +30,22 @@ def main():
     #   colors: shape (N, 3), RGB in [0, 255]. See semantic_color for the table.
     #
     # Hints: You can start by dropping the ceiling and the floor points, and drop stray points that are not
-    # really obstacles. 
+    # really obstacles.
     # END
+
+    # Remove floor, ceiling, mat, vent, and unknown points based on semantic color
+    NOT_OBSTACLES = ['floor', 'ceiling', 'mat', 'vent']
+
+    # Keep only points painted with a listed class that is an obstacle.
+    # Anything else (e.g. unlabelled [0,0,0]) is a stray point.
+    keep_colors = np.array([rgb for name, rgb in SEMANTIC_COLORS.items()
+                            if name not in NOT_OBSTACLES])
+    mask = (colors[:, None, :] == keep_colors[None, :, :]).all(axis=2).any(axis=1)
+
+    # Remove points above the robot (~1.5 m tall, floor at y = -1.56)
+    mask &= coords[:, 1] < 0.0
+    coords = coords[mask]
+    colors = colors[mask]
 
     # Convert the remaining points to the pixel space. Which you will plan path on in main.py.
     x_img, z_img = world_to_pixel(coords[:, 0], coords[:, 2], PROJECTION)

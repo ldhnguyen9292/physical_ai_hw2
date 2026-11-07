@@ -1,0 +1,22 @@
+# Lightweight env for HW2 Part 1 (map + RRT + RDF/SHACL) on Intel macOS.
+# No Habitat-Sim: part2's Habitat drive check must run on linux-64 / osx-arm64.
+# Versions follow the course `habitat` env (../pixi.toml) where an Intel-mac build exists.
+# Usage (from the repo root):
+#   pixi run --manifest-path macos-intel/pixi.toml python part1_planning/map_processor.py
+
+[workspace]
+name = "hw2-macos-intel"
+channels = ["conda-forge"]
+platforms = ["osx-64"]
+
+[dependencies]
+python = "3.9.*"
+numpy = "1.26.4.*"
+scipy = "*"
+matplotlib = "*"
+
+[pypi-dependencies]
+opencv-python = "==4.8.0.76"
+pillow = "*"
+rdflib = "*"
+pyshacl = "*"
