@@ -17,3 +17,4 @@ __pycache__/
 local_check_output/
 local_tools/figs/
 .vscode/
+report_assets/

@@ -29,7 +29,6 @@ OPEN_FLOOR = 0.25         # random points are drawn only where clearance >= this
 MIDDLE_RADIUS = 0.2       # a new node moves to the most open cell within this radius
 MIN_OBJECT_POINTS = 15    # smaller clusters of a goal class are mislabelled stray points
 OBJECT_CELL = 0.10        # grid cell (metres) used to group goal points into objects
-REGION_STEP = 0.002       # spacing of the points tested against zones and personal spaces
 
 
 # 1. Geometry (handout Section 2.2)
@@ -43,12 +42,6 @@ def edge_clearance(a, b, obstacles_xz, obstacle_tree):
     ab = b - a
     t = np.clip((near - a) @ ab / max(ab @ ab, 1e-12), 0.0, 1.0)
     return float(np.linalg.norm(near - (a + t[:, None] * ab), axis=1).min())
-
-
-def points_on_edge(a, b):
-    # Points along the edge a -> b, every REGION_STEP metres, shape (n, 2)
-    n = max(2, int(math.ceil(np.linalg.norm(b - a) / REGION_STEP)) + 1)
-    return a + np.linspace(0.0, 1.0, n)[:, None] * (b - a)
 
 
 def in_polygon(x, z, polygon):
@@ -75,11 +68,62 @@ def in_personal_space(x, z, person):
     return (alpha / reach) ** 2 + (beta / person.s) ** 2 <= 1.0
 
 
+def _cross(o, a, b):
+    return (a[0] - o[0]) * (b[1] - o[1]) - (a[1] - o[1]) * (b[0] - o[0])
+
+
+def segments_touch(p1, p2, q1, q2):
+    # True if segment p1-p2 and segment q1-q2 share at least one point
+    d1, d2 = _cross(q1, q2, p1), _cross(q1, q2, p2)
+    d3, d4 = _cross(p1, p2, q1), _cross(p1, p2, q2)
+    if d1 * d2 < 0 and d3 * d4 < 0:
+        return True
+
+    def on_segment(o, a, p):    # p lies on the line o-a; is it between o and a?
+        return (min(o[0], a[0]) <= p[0] <= max(o[0], a[0]) and
+                min(o[1], a[1]) <= p[1] <= max(o[1], a[1]))
+    return ((d1 == 0 and on_segment(q1, q2, p1)) or (d2 == 0 and on_segment(q1, q2, p2)) or
+            (d3 == 0 and on_segment(p1, p2, q1)) or (d4 == 0 and on_segment(p1, p2, q2)))
+
+
+def edge_enters_zone(a, b, polygon):
+    # F2, exact: the edge enters the closed polygon if an end point is inside
+    # it or the edge touches one of its sides
+    if in_polygon(*a, polygon) or in_polygon(*b, polygon):
+        return True
+    return any(segments_touch(a, b, polygon[i], polygon[(i + 1) % len(polygon)])
+               for i in range(len(polygon)))
+
+
+def edge_enters_personal_space(a, b, person):
+    # F3, exact: along the edge the forward and lateral offsets (alpha, beta)
+    # change linearly, so on each half of the egg (front: reach f, back:
+    # reach b) the egg value is a quadratic in t. Its minimum on the edge is
+    # compared with 1.
+    phi = math.radians(person.phi)
+    c, s = math.cos(phi), math.sin(phi)
+    to_person = lambda p: ((p[0] - person.position[0]) * c + (p[1] - person.position[1]) * s,
+                           -(p[0] - person.position[0]) * s + (p[1] - person.position[1]) * c)
+    a0, b0 = to_person(a)
+    a1, b1 = to_person(b)
+    da, db = a1 - a0, b1 - b0
+    pieces = [(0.0, 1.0)]                       # split where the edge crosses alpha = 0
+    if da != 0 and 0.0 < -a0 / da < 1.0:
+        pieces = [(0.0, -a0 / da), (-a0 / da, 1.0)]
+    for lo, hi in pieces:
+        reach = person.f if a0 + (lo + hi) / 2 * da >= 0 else person.b
+        A = (da / reach) ** 2 + (db / person.s) ** 2
+        B = 2 * (a0 * da / reach ** 2 + b0 * db / person.s ** 2)
+        t = lo if A == 0 else min(max(-B / (2 * A), lo), hi)
+        if ((a0 + t * da) / reach) ** 2 + ((b0 + t * db) / person.s) ** 2 <= 1.0:
+            return True
+    return False
+
+
 def regions_entered(a, b, case):
-    # F2 / F3: ids of the zones and of the personal spaces any edge point lies in
-    x, z = points_on_edge(a, b).T
-    zones = [zn.id for zn in case.restricted_zones if in_polygon(x, z, zn.polygon).any()]
-    people = [p.id for p in case.people if in_personal_space(x, z, p).any()]
+    # F2 / F3: ids of the zones and of the personal spaces the edge enters
+    zones = [zn.id for zn in case.restricted_zones if edge_enters_zone(a, b, zn.polygon)]
+    people = [p.id for p in case.people if edge_enters_personal_space(a, b, p)]
     return zones, people
 
 
