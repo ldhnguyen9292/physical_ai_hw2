@@ -26,6 +26,7 @@ STEP = 0.3                # RRT step: a new node is at most this far from the tr
 GOAL_BIAS = 0.1           # how often the random point is the goal itself
 MAX_ITERS = 5000          # RRT iterations per case
 OPEN_FLOOR = 0.25         # random points are drawn only where clearance >= this
+MIDDLE_RADIUS = 0.2       # a new node moves to the most open cell within this radius
 MIN_OBJECT_POINTS = 15    # smaller clusters of a goal class are mislabelled stray points
 OBJECT_CELL = 0.10        # grid cell (metres) used to group goal points into objects
 REGION_STEP = 0.002       # spacing of the points tested against zones and personal spaces
@@ -52,7 +53,9 @@ def points_on_edge(a, b):
 
 def in_polygon(x, z, polygon):
     # Ray casting, vectorised: a ray towards +x crosses the sides an odd number
-    # of times when the point is inside. x, z are numbers or arrays.
+    # of times when the point is inside. x, z are numbers or arrays. A
+    # horizontal side (z1 == z2) is never crossed, so its x_cross is ignored.
+    x, z = np.asarray(x, dtype=float), np.asarray(z, dtype=float)
     inside = np.zeros(np.shape(x), dtype=bool)
     for (x1, z1), (x2, z2) in zip(polygon, polygon[1:] + polygon[:1]):
         crosses = (z1 > z) != (z2 > z)
@@ -159,9 +162,24 @@ def open_floor_cells(case, cells):
     return np.column_stack((cx[chosen], cz[chosen]))
 
 
-def plan_case(case, goal, obstacles_xz, obstacle_tree, random_cells, rules, rng):
+def move_to_middle(point, clearance_grid):
+    # The most open cell within MIDDLE_RADIUS of point, i.e. the middle of the
+    # free space there (the farthest from the nearest obstacle), so nodes do
+    # not sit next to furniture. clearance_grid is indexed [pz, px].
+    size, res, origin = PROJECTION.size, PROJECTION.resolution, PROJECTION.origin
+    r = int(round(MIDDLE_RADIUS / res))
+    px, pz = int((point[0] - origin[0]) / res), int((point[1] - origin[1]) / res)
+    x0, z0 = max(px - r, 0), max(pz - r, 0)
+    window = clearance_grid[z0:min(pz + r + 1, size), x0:min(px + r + 1, size)]
+    jz, jx = np.unravel_index(np.argmax(window), window.shape)
+    return np.array([origin[0] + (x0 + jx + 0.5) * res, origin[1] + (z0 + jz + 0.5) * res])
+
+
+def plan_case(case, goal, obstacles_xz, obstacle_tree, cells, rules, rng):
     """Grow an RRT from the start to the goal. Returns (record, reached, n_edges, n_tree)."""
     record, regions = new_record(case, goal)
+    random_cells = open_floor_cells(case, cells)
+    clearance_grid = cells[2].reshape(PROJECTION.size, PROJECTION.size)
     nodes = np.empty((MAX_ITERS + 1, 2))        # coordinates of the accepted tree nodes
     nodes[0] = case.start_world
     ids = ["node_root"]
@@ -205,11 +223,23 @@ def plan_case(case, goal, obstacles_xz, obstacle_tree, random_cells, rules, rng)
                 break
             continue
 
-        # Step 3: new node at most STEP from q towards p; Step 4: SHACL decides
-        new = q + (p - q) * min(1.0, STEP / d)
-        new_id = f"node_{it}"
-        add_node(record, new_id, new)
-        if not try_edge(ids[i], q, new_id, new):
+        # Step 3: new node at most STEP from q towards p, moved to the middle of
+        #         the free space around it. Step 4: SHACL decides; if the middle
+        #         is rejected (e.g. at a narrow door), the original point is tried.
+        raw = q + (p - q) * min(1.0, STEP / d)
+        middle = move_to_middle(raw, clearance_grid)
+        new_id = None
+        for suffix, new in (("", middle), ("b", raw)):
+            if suffix and np.allclose(new, middle):
+                break
+            if np.linalg.norm(new - q) < 1e-6:
+                continue
+            node_id = f"node_{it}{suffix}"
+            add_node(record, node_id, new)
+            if try_edge(ids[i], q, node_id, new):
+                new_id = node_id
+                break
+        if new_id is None:
             continue
         nodes[len(ids)] = new
         ids.append(new_id)
@@ -344,7 +374,7 @@ def main():
             print(f"{case.id}: no {case.goal_object} in the map, no path planned")
         else:
             record, reached, n_edges, n_tree = plan_case(
-                case, goal, obstacles_xz, obstacle_tree, open_floor_cells(case, cells), rules, rng)
+                case, goal, obstacles_xz, obstacle_tree, cells, rules, rng)
             print(f"{case.id} {case.goal_object}: goal=({goal[0]:.2f}, {goal[1]:.2f}) "
                   f"reached={reached} candidates={n_edges} tree_nodes={n_tree}")
         record.serialize(destination=record_path, format="turtle")
